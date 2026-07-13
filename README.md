@@ -41,6 +41,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design.
 procurement-saas-platform/
 ├── api-gateway/         # Spring Cloud Gateway (edge, auth, routing)
 ├── service-template/    # Copy-me archetype for every business service
+├── identity-service/    # Users, roles, feature-level RBAC, Keycloak JWT
 ├── docs/                # Architecture & design notes
 └── docker-compose.yml   # Local infra: PostgreSQL, Keycloak, Redis, MinIO
 ```
