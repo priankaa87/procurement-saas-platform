@@ -39,7 +39,7 @@ public class TenantConnectionProvider extends AbstractMultiTenantConnectionProvi
 
     @Override
     public Connection getConnection(String tenantIdentifier) throws SQLException {
-        Connection connection = super.getAnyConnectionProvider().getConnection();
+        Connection connection = getAnyConnectionProvider().getConnection();
         connection.setSchema(sanitize(tenantIdentifier));
         return connection;
     }
@@ -47,7 +47,7 @@ public class TenantConnectionProvider extends AbstractMultiTenantConnectionProvi
     @Override
     public void releaseConnection(String tenantIdentifier, Connection connection) throws SQLException {
         connection.setSchema(TenantContext.DEFAULT_TENANT);
-        super.getAnyConnectionProvider().closeConnection(connection);
+        getAnyConnectionProvider().closeConnection(connection);
     }
 
     /** Only allow simple identifiers to avoid search_path / schema injection. */
