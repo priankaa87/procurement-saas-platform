@@ -1,0 +1,31 @@
+// Root build for the Procurement SaaS microservices platform.
+// Shared configuration applied to every module.
+plugins {
+    id 'org.springframework.boot' version "${springBootVersion}" apply false
+    id 'io.spring.dependency-management' version '1.1.7' apply false
+    id 'java'
+}
+
+allprojects {
+    group = project.findProperty('group')
+    version = project.findProperty('version')
+    repositories { mavenCentral() }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    java {
+        toolchain { languageVersion = JavaLanguageVersion.of(21) }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+
+    tasks.named('test') { useJUnitPlatform() }
+}

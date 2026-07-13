@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8081/realms/procurement}
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      routes:
+        - id: identity-service
+          uri: ${IDENTITY_URI:http://localhost:8090}
+          predicates:
+            - Path=/api/identity/**,/api/auth/**
+          filters:
+            - StripPrefix=2
+        - id: vendor-service
+          uri: ${VENDOR_URI:http://localhost:8091}
+          predicates:
+            - Path=/api/vendors/**
+          filters:
+            - StripPrefix=2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  tracing:
+    sampling:
+      probability: 1.0
