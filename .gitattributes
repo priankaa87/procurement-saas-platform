@@ -1,0 +1,7 @@
+# Keep shell scripts and the Gradle wrapper LF so they run on Linux CI
+*.sh    text eol=lf
+gradlew text eol=lf
+*.bat   text eol=crlf
+
+# Treat the wrapper jar as binary
+*.jar   binary
