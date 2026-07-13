@@ -42,6 +42,7 @@ procurement-saas-platform/
 ├── api-gateway/         # Spring Cloud Gateway (edge, auth, routing)
 ├── service-template/    # Copy-me archetype for every business service
 ├── identity-service/    # Users, roles, feature-level RBAC, Keycloak JWT
+├── master-data-service/ # Units, currencies, items, geography (cached reference data)
 ├── docs/                # Architecture & design notes
 └── docker-compose.yml   # Local infra: PostgreSQL, Keycloak, Redis, MinIO
 ```

@@ -94,7 +94,7 @@ Tempo · Docker · Kubernetes · React + TypeScript · Flyway · Testcontainers
 
 - [x] Platform foundation — API gateway + multi-tenant service template
 - [x] Identity & Access service — users, roles, feature-level RBAC, Keycloak JWT
-- [ ] Master Data service
+- [x] Master Data service — units, currencies, items, geography (cached, seeded)
 - [ ] Vendor Management + Notification
 - [ ] Tender + Evaluation
 - [ ] Award / Workflow / Enlistment

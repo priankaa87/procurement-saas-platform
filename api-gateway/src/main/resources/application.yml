@@ -26,6 +26,12 @@ spring:
             - Path=/api/vendors/**
           filters:
             - StripPrefix=2
+        - id: master-data-service
+          uri: ${MASTERDATA_URI:http://localhost:8092}
+          predicates:
+            - Path=/api/master-data/**
+          filters:
+            - StripPrefix=2
 
 management:
   endpoints:
