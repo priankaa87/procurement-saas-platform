@@ -98,11 +98,16 @@ public class Supplier {
         this.status = SupplierStatus.SUSPENDED;
     }
 
-    void markDebarred() {
+    /**
+     * Applies a debarment decision. Call this only from the debarment process, which
+     * owns the eligibility rules and writes the accompanying audit record.
+     */
+    public void markDebarred() {
         this.status = SupplierStatus.DEBARRED;
     }
 
-    void markReinstated() {
+    /** Lifts a debarment. Counterpart to {@link #markDebarred()}; same ownership rule. */
+    public void markReinstated() {
         this.status = SupplierStatus.ACTIVE;
     }
 
