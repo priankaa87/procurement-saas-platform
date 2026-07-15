@@ -38,6 +38,12 @@ spring:
             - Path=/api/tenders/**
           filters:
             - StripPrefix=2
+        - id: evaluation-service
+          uri: ${EVALUATION_URI:http://localhost:8094}
+          predicates:
+            - Path=/api/evaluations/**
+          filters:
+            - StripPrefix=2
 
 management:
   endpoints:

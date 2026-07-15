@@ -98,7 +98,7 @@ Tempo · Docker · Kubernetes · React + TypeScript · Flyway · Testcontainers
 - [x] Master Data service — units, currencies, items, geography (cached, seeded)
 - [x] Vendor Management service — supplier lifecycle, contacts, documents, debarment
 - [x] Tender service — lifecycle, items, participants, sealed bids, opening, award
-- [ ] Evaluation service
+- [x] Evaluation service — weighted technical + financial scoring, comparative statement
 - [ ] Notification service
 - [ ] Tender + Evaluation
 - [ ] Award / Workflow / Enlistment

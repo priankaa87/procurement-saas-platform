@@ -46,6 +46,7 @@ procurement-saas-platform/
 ├── master-data-service/        # Units, currencies, items, geography (cached)
 ├── vendor-management-service/  # Supplier lifecycle, contacts, documents, debarment
 ├── tender-service/             # Tender lifecycle, sealed bids, opening, award
+├── evaluation-service/         # Technical + financial scoring, comparative statement
 ├── docs/                       # Architecture & design notes
 └── docker-compose.yml          # Local infra: PostgreSQL, Keycloak, Redis, MinIO
 ```
