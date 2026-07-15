@@ -101,7 +101,7 @@ Tempo · Docker · Kubernetes · React + TypeScript · Flyway · Testcontainers
 - [x] Evaluation service — weighted technical + financial scoring, comparative statement
 - [x] Event backbone (`platform-events`) — Kafka contracts, publish-after-commit
 - [x] Notification service — event-driven, templated, idempotent
-- [ ] Tender + Evaluation
-- [ ] Award / Workflow / Enlistment
+- [x] Tenant & Billing — onboarding with real schema provisioning, plans, quotas, invoices
+- [ ] Award & Contract / Workflow & Approval / Enlistment
 - [ ] Tenant & Billing (SaaS) + Reporting engine
 - [ ] React front end

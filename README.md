@@ -49,6 +49,7 @@ procurement-saas-platform/
 ├── tender-service/             # Tender lifecycle, sealed bids, opening, award
 ├── evaluation-service/         # Technical + financial scoring, comparative statement
 ├── notification-service/       # Event-driven notifications, templates, delivery status
+├── tenant-billing-service/     # SaaS control plane: onboarding, schema provisioning, plans
 ├── docs/                       # Architecture & design notes
 └── docker-compose.yml          # Local infra: PostgreSQL, Kafka, Keycloak, Redis, MinIO
 ```

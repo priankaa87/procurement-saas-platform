@@ -44,6 +44,19 @@ spring:
             - Path=/api/evaluations/**
           filters:
             - StripPrefix=2
+        - id: notification-service
+          uri: ${NOTIFICATION_URI:http://localhost:8095}
+          predicates:
+            - Path=/api/notifications/**,/api/templates/**
+          filters:
+            - StripPrefix=2
+        # Control plane: manages tenants themselves, so it is not tenant-scoped.
+        - id: tenant-billing-service
+          uri: ${TENANT_URI:http://localhost:8096}
+          predicates:
+            - Path=/api/tenants/**,/api/plans/**,/api/invoices/**
+          filters:
+            - StripPrefix=2
 
 management:
   endpoints:

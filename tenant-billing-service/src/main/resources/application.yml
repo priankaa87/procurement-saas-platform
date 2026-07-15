@@ -1,0 +1,39 @@
+server:
+  port: 8096
+
+spring:
+  application:
+    name: tenant-billing-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/procurement}
+    username: ${DB_USER:procurement}
+    password: ${DB_PASSWORD:procurement}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    # The control-plane registry lives in the shared schema; per-tenant schemas are
+    # migrated separately by TenantProvisioner from classpath:db/tenant.
+    schemas: public
+    locations: classpath:db/migration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8081/realms/procurement}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
