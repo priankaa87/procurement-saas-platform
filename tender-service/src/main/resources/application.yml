@@ -1,0 +1,38 @@
+server:
+  port: 8093
+
+spring:
+  application:
+    name: tender-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/procurement}
+    username: ${DB_USER:procurement}
+    password: ${DB_PASSWORD:procurement}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate.format_sql: true
+  flyway:
+    enabled: true
+    schemas: public
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8081/realms/procurement}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true

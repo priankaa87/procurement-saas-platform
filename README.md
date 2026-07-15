@@ -45,6 +45,7 @@ procurement-saas-platform/
 ├── identity-service/           # Users, roles, feature-level RBAC, Keycloak JWT
 ├── master-data-service/        # Units, currencies, items, geography (cached)
 ├── vendor-management-service/  # Supplier lifecycle, contacts, documents, debarment
+├── tender-service/             # Tender lifecycle, sealed bids, opening, award
 ├── docs/                       # Architecture & design notes
 └── docker-compose.yml          # Local infra: PostgreSQL, Keycloak, Redis, MinIO
 ```

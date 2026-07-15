@@ -32,6 +32,12 @@ spring:
             - Path=/api/master-data/**
           filters:
             - StripPrefix=2
+        - id: tender-service
+          uri: ${TENDER_URI:http://localhost:8093}
+          predicates:
+            - Path=/api/tenders/**
+          filters:
+            - StripPrefix=2
 
 management:
   endpoints:
