@@ -32,11 +32,16 @@ class TenantKeyTest {
         "acme corp",                // space
         "acme;drop",                // statement separator
         "acme\"",                   // quote — would break out of the identifier
-        "acme--",                   // comment marker
-        "a".repeat(31)              // too long
+        "acme--"                    // comment marker
     })
     void hostileOrMalformedKeysAreRejected(String key) {
         assertThatThrownBy(() -> TenantKey.validate(key))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void anOverlongKeyIsRejected() {
+        assertThatThrownBy(() -> TenantKey.validate("a".repeat(31)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
