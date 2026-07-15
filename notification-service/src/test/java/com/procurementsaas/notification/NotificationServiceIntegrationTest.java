@@ -36,7 +36,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Proves the event backbone end to end: an event published to Kafka results in rendered,
  * delivered notifications — with no synchronous call between the services.
  */
-@SpringBootTest
+// This service only consumes in production, so it configures no producer. The test plays
+// the part of tender-service, and needs the same JSON serializer that service publishes with.
+@SpringBootTest(properties = {
+    "spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer",
+    "spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer"
+})
 @AutoConfigureMockMvc
 @Testcontainers
 class NotificationServiceIntegrationTest {
