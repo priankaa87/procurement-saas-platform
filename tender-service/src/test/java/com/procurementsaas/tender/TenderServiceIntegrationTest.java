@@ -1,7 +1,16 @@
 package com.procurementsaas.tender;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.procurementsaas.events.Topics;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.Test;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,12 +21,18 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,6 +53,12 @@ class TenderServiceIntegrationTest {
     @Container
     @ServiceConnection
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
+
+    /** Publishing a tender emits a Kafka event, so the broker must be real here too. */
+    @Container
+    @ServiceConnection
+    static KafkaContainer kafka =
+        new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"));
 
     @MockitoBean
     JwtDecoder jwtDecoder;
@@ -295,6 +316,52 @@ class TenderServiceIntegrationTest {
     void unknownTenderReturns404() throws Exception {
         mvc.perform(get("/tenders/999999").with(with(VIEW)))
             .andExpect(status().isNotFound());
+    }
+
+    /**
+     * Publishing a tender must announce it on Kafka, carrying the invited suppliers so
+     * consumers don't have to call back into this service.
+     */
+    @Test
+    void publishingATenderEmitsAnEventCarryingTheInvitedSuppliers() throws Exception {
+        try (Consumer<String, String> consumer = testConsumer(Topics.TENDER_PUBLISHED)) {
+            publishedTender("T-EVENT", 3600);
+
+            ConsumerRecord<String, String> record =
+                KafkaTestUtils.getSingleRecord(consumer, Topics.TENDER_PUBLISHED,
+                    Duration.ofSeconds(20));
+
+            assertThat(record.key()).isEqualTo("T-EVENT");
+            JsonNode payload = objectMapper.readTree(record.value());
+            assertThat(payload.get("tenderCode").asText()).isEqualTo("T-EVENT");
+            assertThat(payload.get("supplierCodes")).hasSize(2);
+            assertThat(payload.get("bidDeadline")).isNotNull();
+        }
+    }
+
+    /** A tender that fails to publish must not announce itself. */
+    @Test
+    void aFailedPublishEmitsNoEvent() throws Exception {
+        try (Consumer<String, String> consumer = testConsumer(Topics.TENDER_PUBLISHED)) {
+            Long id = createTender("T-NOEVENT", 3600);   // no items -> publish fails
+            mvc.perform(post("/tenders/" + id + "/publish").with(with(MANAGE)))
+                .andExpect(status().isConflict());
+
+            ConsumerRecords<String, String> records =
+                KafkaTestUtils.getRecords(consumer, Duration.ofSeconds(3));
+            assertThat(records.count()).isZero();
+        }
+    }
+
+    private Consumer<String, String> testConsumer(String topic) {
+        Map<String, Object> props = KafkaTestUtils.consumerProps(
+            kafka.getBootstrapServers(), "test-" + topic + "-" + System.nanoTime(), "true");
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        Consumer<String, String> consumer = new DefaultKafkaConsumerFactory<>(props,
+            new StringDeserializer(), new StringDeserializer()).createConsumer();
+        consumer.subscribe(List.of(topic));
+        consumer.poll(Duration.ofMillis(500));   // force partition assignment
+        return consumer;
     }
 
     /** Waits out the short deadline used by the opening tests. */

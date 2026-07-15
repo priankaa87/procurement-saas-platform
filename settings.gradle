@@ -1,6 +1,7 @@
 rootProject.name = 'procurement-saas-platform'
 
 include 'platform-common'
+include 'platform-events'
 include 'api-gateway'
 include 'service-template'
 include 'identity-service'
@@ -8,3 +9,4 @@ include 'master-data-service'
 include 'vendor-management-service'
 include 'tender-service'
 include 'evaluation-service'
+include 'notification-service'

@@ -1,6 +1,9 @@
 package com.procurementsaas.tender.service;
 
+import com.procurementsaas.common.tenancy.TenantContext;
 import com.procurementsaas.common.web.NotFoundException;
+import com.procurementsaas.events.TenderAwardedEvent;
+import com.procurementsaas.events.TenderPublishedEvent;
 import com.procurementsaas.tender.domain.Tender;
 import com.procurementsaas.tender.domain.TenderItem;
 import com.procurementsaas.tender.domain.TenderParticipant;
@@ -16,9 +19,11 @@ import com.procurementsaas.tender.repo.BidRepository;
 import com.procurementsaas.tender.repo.TenderItemRepository;
 import com.procurementsaas.tender.repo.TenderParticipantRepository;
 import com.procurementsaas.tender.repo.TenderRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 /** Drafting, publishing, opening, and awarding tenders. */
@@ -30,15 +35,18 @@ public class TenderService {
     private final TenderItemRepository itemRepository;
     private final TenderParticipantRepository participantRepository;
     private final BidRepository bidRepository;
+    private final ApplicationEventPublisher events;
 
     public TenderService(TenderRepository tenderRepository,
                          TenderItemRepository itemRepository,
                          TenderParticipantRepository participantRepository,
-                         BidRepository bidRepository) {
+                         BidRepository bidRepository,
+                         ApplicationEventPublisher events) {
         this.tenderRepository = tenderRepository;
         this.itemRepository = itemRepository;
         this.participantRepository = participantRepository;
         this.bidRepository = bidRepository;
+        this.events = events;
     }
 
     @Transactional(readOnly = true)
@@ -112,7 +120,16 @@ public class TenderService {
     public TenderDto publish(Long id) {
         Tender tender = findTender(id);
         tender.publish(itemRepository.countByTenderId(id));
-        return withItemCount(tenderRepository.save(tender));
+        Tender saved = tenderRepository.save(tender);
+
+        List<String> invited = participantRepository.findByTenderId(id).stream()
+            .map(TenderParticipant::getSupplierCode)
+            .toList();
+        // Handed to Kafka only once this transaction commits (see TenderEventForwarder).
+        events.publishEvent(new TenderPublishedEvent(TenantContext.getTenant(), saved.getCode(),
+            saved.getTitle(), saved.getBidDeadline(), invited, Instant.now()));
+
+        return withItemCount(saved);
     }
 
     /** Opens the tender after the deadline, unsealing bids for evaluation. */
@@ -130,7 +147,17 @@ public class TenderService {
                 "Cannot award to a supplier that did not bid: " + request.supplierCode());
         }
         tender.award(request.supplierCode());
-        return withItemCount(tenderRepository.save(tender));
+        Tender saved = tenderRepository.save(tender);
+
+        // Losing bidders are named in the event so consumers needn't work out who lost.
+        List<String> unsuccessful = bidRepository.findByTenderIdOrderByTotalAmountAsc(id).stream()
+            .map(bid -> bid.getSupplierCode())
+            .filter(code -> !code.equals(request.supplierCode()))
+            .toList();
+        events.publishEvent(new TenderAwardedEvent(TenantContext.getTenant(), saved.getCode(),
+            saved.getTitle(), request.supplierCode(), unsuccessful, Instant.now()));
+
+        return withItemCount(saved);
     }
 
     public TenderDto cancel(Long id) {

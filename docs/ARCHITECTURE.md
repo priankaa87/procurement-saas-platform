@@ -99,7 +99,8 @@ Tempo · Docker · Kubernetes · React + TypeScript · Flyway · Testcontainers
 - [x] Vendor Management service — supplier lifecycle, contacts, documents, debarment
 - [x] Tender service — lifecycle, items, participants, sealed bids, opening, award
 - [x] Evaluation service — weighted technical + financial scoring, comparative statement
-- [ ] Notification service
+- [x] Event backbone (`platform-events`) — Kafka contracts, publish-after-commit
+- [x] Notification service — event-driven, templated, idempotent
 - [ ] Tender + Evaluation
 - [ ] Award / Workflow / Enlistment
 - [ ] Tenant & Billing (SaaS) + Reporting engine

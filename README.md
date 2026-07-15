@@ -40,6 +40,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design.
 ```
 procurement-saas-platform/
 ├── platform-common/            # Shared: multi-tenancy, security, error handling (auto-config)
+├── platform-events/            # Shared domain-event contracts + Kafka publisher
 ├── api-gateway/                # Spring Cloud Gateway (edge, auth, routing)
 ├── service-template/           # Copy-me archetype for every business service
 ├── identity-service/           # Users, roles, feature-level RBAC, Keycloak JWT
@@ -47,8 +48,9 @@ procurement-saas-platform/
 ├── vendor-management-service/  # Supplier lifecycle, contacts, documents, debarment
 ├── tender-service/             # Tender lifecycle, sealed bids, opening, award
 ├── evaluation-service/         # Technical + financial scoring, comparative statement
+├── notification-service/       # Event-driven notifications, templates, delivery status
 ├── docs/                       # Architecture & design notes
-└── docker-compose.yml          # Local infra: PostgreSQL, Keycloak, Redis, MinIO
+└── docker-compose.yml          # Local infra: PostgreSQL, Kafka, Keycloak, Redis, MinIO
 ```
 
 Cross-cutting concerns live once in `platform-common` and are applied to every service via

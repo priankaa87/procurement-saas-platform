@@ -1,0 +1,13 @@
+// Shared domain-event contracts and the Kafka publishing helper.
+// Services that emit or consume events depend on this; services that don't, don't.
+plugins {
+    id 'java-library'
+}
+
+tasks.named('bootJar') { enabled = false }
+tasks.named('jar') { enabled = true }
+
+dependencies {
+    api 'org.springframework.kafka:spring-kafka'
+    api 'org.springframework.boot:spring-boot-starter-json'
+}
