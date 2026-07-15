@@ -1,6 +1,6 @@
 package com.procurementsaas.template.web;
 
-import com.procurementsaas.template.tenancy.TenantContext;
+import com.procurementsaas.common.tenancy.TenantContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;

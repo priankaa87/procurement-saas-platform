@@ -1,5 +1,6 @@
 rootProject.name = 'procurement-saas-platform'
 
+include 'platform-common'
 include 'api-gateway'
 include 'service-template'
 include 'identity-service'

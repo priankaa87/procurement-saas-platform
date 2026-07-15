@@ -1,5 +1,6 @@
 package com.procurementsaas.masterdata.service;
 
+import com.procurementsaas.common.web.NotFoundException;
 import com.procurementsaas.masterdata.domain.City;
 import com.procurementsaas.masterdata.domain.Country;
 import com.procurementsaas.masterdata.dto.Dtos.CityDto;

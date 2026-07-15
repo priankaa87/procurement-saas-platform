@@ -1,0 +1,3 @@
+com.procurementsaas.common.autoconfigure.PlatformTenancyAutoConfiguration
+com.procurementsaas.common.autoconfigure.PlatformSecurityAutoConfiguration
+com.procurementsaas.common.autoconfigure.PlatformWebAutoConfiguration

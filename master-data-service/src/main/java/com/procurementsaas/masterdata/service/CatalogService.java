@@ -1,5 +1,6 @@
 package com.procurementsaas.masterdata.service;
 
+import com.procurementsaas.common.web.NotFoundException;
 import com.procurementsaas.masterdata.domain.Item;
 import com.procurementsaas.masterdata.domain.ItemCategory;
 import com.procurementsaas.masterdata.domain.MeasurementUnit;

@@ -1,5 +1,6 @@
 package com.procurementsaas.identity.service;
 
+import com.procurementsaas.common.web.NotFoundException;
 import com.procurementsaas.identity.domain.AppUser;
 import com.procurementsaas.identity.dto.Dtos.CreateUserRequest;
 import com.procurementsaas.identity.dto.Dtos.UserDto;

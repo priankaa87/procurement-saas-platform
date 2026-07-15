@@ -1,4 +1,4 @@
-package com.procurementsaas.masterdata.security;
+package com.procurementsaas.common.security;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -14,9 +14,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Maps a Keycloak JWT into Spring authorities: {@code realm_access.roles} become
- * {@code ROLE_<role>} and a custom {@code features} claim becomes feature authorities,
- * so {@code @PreAuthorize("hasAuthority('FEATURE_MASTERDATA_MANAGE')")} works directly.
+ * Maps a Keycloak-issued JWT into Spring Security authorities.
+ *
+ * <ul>
+ *   <li>{@code realm_access.roles} → {@code ROLE_<role>} authorities</li>
+ *   <li>a custom {@code features} claim (array of feature codes) → authorities as-is,
+ *       so {@code @PreAuthorize("hasAuthority('FEATURE_X')")} works directly</li>
+ * </ul>
  */
 public class KeycloakJwtAuthenticationConverter
         implements Converter<Jwt, AbstractAuthenticationToken> {

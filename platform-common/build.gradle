@@ -1,0 +1,17 @@
+// Shared library for all business services: multi-tenancy, resource-server security,
+// and common web error handling — delivered via Spring Boot auto-configuration.
+// This is a plain library, not an executable app.
+plugins {
+    id 'java-library'
+}
+
+tasks.named('bootJar') { enabled = false }
+tasks.named('jar') { enabled = true }
+
+dependencies {
+    api 'org.springframework.boot:spring-boot-starter-web'
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    api 'org.springframework.boot:spring-boot-starter-security'
+    api 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    api 'org.springframework.boot:spring-boot-starter-validation'
+}

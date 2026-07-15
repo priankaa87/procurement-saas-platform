@@ -1,5 +1,6 @@
 package com.procurementsaas.identity.service;
 
+import com.procurementsaas.common.web.NotFoundException;
 import com.procurementsaas.identity.domain.Feature;
 import com.procurementsaas.identity.domain.Role;
 import com.procurementsaas.identity.dto.Dtos.CreateRoleRequest;

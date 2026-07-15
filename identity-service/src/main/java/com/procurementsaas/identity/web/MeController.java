@@ -1,6 +1,6 @@
 package com.procurementsaas.identity.web;
 
-import com.procurementsaas.identity.tenancy.TenantContext;
+import com.procurementsaas.common.tenancy.TenantContext;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;

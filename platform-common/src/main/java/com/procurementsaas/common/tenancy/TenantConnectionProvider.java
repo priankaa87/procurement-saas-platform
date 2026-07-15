@@ -1,9 +1,7 @@
-package com.procurementsaas.identity.tenancy;
+package com.procurementsaas.common.tenancy;
 
 import org.hibernate.engine.jdbc.connections.spi.AbstractMultiTenantConnectionProvider;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -11,16 +9,16 @@ import java.sql.SQLException;
 
 /**
  * Schema-per-tenant connection provider. A single physical {@link DataSource} backs all
- * tenants; before handing a connection to Hibernate we switch the active PostgreSQL schema.
- * Resetting to {@code public} on release keeps pooled connections clean. Only known,
- * provisioned tenant schemas are allowed, to prevent injection via the tenant identifier.
+ * tenants; before handing a connection to Hibernate we switch the active PostgreSQL schema,
+ * and reset it on release so pooled connections stay clean.
+ *
+ * <p>Only simple identifiers are accepted, so a hostile tenant id cannot inject SQL or
+ * escape into another schema; anything unexpected falls back to the default schema.
  */
-@Component
 public class TenantConnectionProvider extends AbstractMultiTenantConnectionProvider<String> {
 
     private final DataSource dataSource;
 
-    @Autowired
     public TenantConnectionProvider(DataSource dataSource) {
         this.dataSource = dataSource;
     }

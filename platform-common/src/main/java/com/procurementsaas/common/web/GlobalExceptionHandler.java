@@ -1,4 +1,4 @@
-package com.procurementsaas.identity.web;
+package com.procurementsaas.common.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.Instant;
 import java.util.Map;
 
-/** Translates common exceptions into clean JSON error responses. */
+/** Translates common exceptions into clean JSON error responses across all services. */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

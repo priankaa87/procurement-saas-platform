@@ -1,9 +1,10 @@
-package com.procurementsaas.masterdata.tenancy;
+package com.procurementsaas.common.tenancy;
 
 /**
- * Holds the current tenant id for the duration of a request (per-thread). Populated by
- * {@link TenantFilter} from the {@code X-Tenant-ID} header and read by
- * {@link CurrentTenantResolver} to select the schema.
+ * Holds the current tenant id for the duration of a request, on a per-thread basis.
+ * Populated by {@link TenantFilter} from the {@code X-Tenant-ID} header (set by the
+ * gateway from the JWT {@code tenant} claim) and read by {@link CurrentTenantResolver}
+ * to select the correct schema.
  */
 public final class TenantContext {
 
