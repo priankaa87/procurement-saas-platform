@@ -14,11 +14,24 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleBadRequest(IllegalArgumentException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+        return body(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    /**
+     * An operation that is invalid for the entity's current state (e.g. activating a
+     * debarred supplier). That is a conflict with current state, not a malformed request.
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, Object>> handleConflict(IllegalStateException ex) {
+        return body(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    private static ResponseEntity<Map<String, Object>> body(HttpStatus status, String message) {
+        return ResponseEntity.status(status).body(Map.of(
             "timestamp", Instant.now().toString(),
-            "status", HttpStatus.BAD_REQUEST.value(),
-            "error", "Bad Request",
-            "message", String.valueOf(ex.getMessage())
+            "status", status.value(),
+            "error", status.getReasonPhrase(),
+            "message", String.valueOf(message)
         ));
     }
 }

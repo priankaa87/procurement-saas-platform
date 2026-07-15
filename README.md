@@ -39,13 +39,19 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design.
 
 ```
 procurement-saas-platform/
-├── api-gateway/         # Spring Cloud Gateway (edge, auth, routing)
-├── service-template/    # Copy-me archetype for every business service
-├── identity-service/    # Users, roles, feature-level RBAC, Keycloak JWT
-├── master-data-service/ # Units, currencies, items, geography (cached reference data)
-├── docs/                # Architecture & design notes
-└── docker-compose.yml   # Local infra: PostgreSQL, Keycloak, Redis, MinIO
+├── platform-common/            # Shared: multi-tenancy, security, error handling (auto-config)
+├── api-gateway/                # Spring Cloud Gateway (edge, auth, routing)
+├── service-template/           # Copy-me archetype for every business service
+├── identity-service/           # Users, roles, feature-level RBAC, Keycloak JWT
+├── master-data-service/        # Units, currencies, items, geography (cached)
+├── vendor-management-service/  # Supplier lifecycle, contacts, documents, debarment
+├── docs/                       # Architecture & design notes
+└── docker-compose.yml          # Local infra: PostgreSQL, Keycloak, Redis, MinIO
 ```
+
+Cross-cutting concerns live once in `platform-common` and are applied to every service via
+Spring Boot auto-configuration — a service gets multi-tenancy and JWT security by adding a
+single dependency, and can override any bean.
 
 ## Quick start
 

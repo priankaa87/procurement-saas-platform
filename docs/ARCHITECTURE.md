@@ -93,9 +93,11 @@ Tempo · Docker · Kubernetes · React + TypeScript · Flyway · Testcontainers
 ## Roadmap
 
 - [x] Platform foundation — API gateway + multi-tenant service template
+- [x] `platform-common` — shared tenancy/security/error handling via auto-configuration
 - [x] Identity & Access service — users, roles, feature-level RBAC, Keycloak JWT
 - [x] Master Data service — units, currencies, items, geography (cached, seeded)
-- [ ] Vendor Management + Notification
+- [x] Vendor Management service — supplier lifecycle, contacts, documents, debarment
+- [ ] Notification service
 - [ ] Tender + Evaluation
 - [ ] Award / Workflow / Enlistment
 - [ ] Tenant & Billing (SaaS) + Reporting engine
