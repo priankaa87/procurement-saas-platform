@@ -103,6 +103,7 @@ Tempo · Docker · Kubernetes · React + TypeScript · Flyway · Testcontainers
 - [x] Notification service — event-driven, templated, idempotent
 - [x] Tenant & Billing — onboarding with real schema provisioning, plans, quotas, invoices
 - [x] Award & Contract — notice of award, work orders, delivery schedule, goods receipt
-- [ ] Workflow & Approval / Enlistment
+- [x] Workflow & Approval — configurable steps, separation of duties, delegation of authority
+- [ ] Enlistment / Pre-Qualification
 - [ ] Tenant & Billing (SaaS) + Reporting engine
 - [ ] React front end
