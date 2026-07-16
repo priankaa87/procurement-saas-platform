@@ -102,6 +102,7 @@ Tempo · Docker · Kubernetes · React + TypeScript · Flyway · Testcontainers
 - [x] Event backbone (`platform-events`) — Kafka contracts, publish-after-commit
 - [x] Notification service — event-driven, templated, idempotent
 - [x] Tenant & Billing — onboarding with real schema provisioning, plans, quotas, invoices
-- [ ] Award & Contract / Workflow & Approval / Enlistment
+- [x] Award & Contract — notice of award, work orders, delivery schedule, goods receipt
+- [ ] Workflow & Approval / Enlistment
 - [ ] Tenant & Billing (SaaS) + Reporting engine
 - [ ] React front end

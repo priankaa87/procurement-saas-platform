@@ -21,6 +21,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -117,7 +118,8 @@ class NotificationServiceIntegrationTest {
     @Test
     void awardingATenderTellsTheWinnerAndTheLosersDifferentThings() {
         TenderAwardedEvent event = new TenderAwardedEvent("public", "T-NOTIFY-2", "Servers",
-            "SUP-WIN", List.of("SUP-LOSE-1", "SUP-LOSE-2"), Instant.now());
+            "SUP-WIN", new BigDecimal("1200.00"), "USD",
+            List.of("SUP-LOSE-1", "SUP-LOSE-2"), Instant.now());
 
         kafkaTemplate.send(Topics.TENDER_AWARDED, event.tenderCode(), event);
 

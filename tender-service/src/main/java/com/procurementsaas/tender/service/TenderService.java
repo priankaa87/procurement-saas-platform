@@ -4,6 +4,7 @@ import com.procurementsaas.common.tenancy.TenantContext;
 import com.procurementsaas.common.web.NotFoundException;
 import com.procurementsaas.events.TenderAwardedEvent;
 import com.procurementsaas.events.TenderPublishedEvent;
+import com.procurementsaas.tender.domain.Bid;
 import com.procurementsaas.tender.domain.Tender;
 import com.procurementsaas.tender.domain.TenderItem;
 import com.procurementsaas.tender.domain.TenderParticipant;
@@ -142,20 +143,23 @@ public class TenderService {
     /** Awards the tender; the winner must actually have bid. */
     public TenderDto award(Long id, AwardRequest request) {
         Tender tender = findTender(id);
-        if (!bidRepository.existsByTenderIdAndSupplierCode(id, request.supplierCode())) {
-            throw new IllegalArgumentException(
-                "Cannot award to a supplier that did not bid: " + request.supplierCode());
-        }
+        Bid winningBid = bidRepository.findByTenderIdAndSupplierCode(id, request.supplierCode())
+            .orElseThrow(() -> new IllegalArgumentException(
+                "Cannot award to a supplier that did not bid: " + request.supplierCode()));
+
         tender.award(request.supplierCode());
         Tender saved = tenderRepository.save(tender);
 
         // Losing bidders are named in the event so consumers needn't work out who lost.
         List<String> unsuccessful = bidRepository.findByTenderIdOrderByTotalAmountAsc(id).stream()
-            .map(bid -> bid.getSupplierCode())
+            .map(Bid::getSupplierCode)
             .filter(code -> !code.equals(request.supplierCode()))
             .toList();
+        // The winning amount travels with the event so a contract can be raised from it
+        // without reading back into this service, and is fixed as of the award.
         events.publishEvent(new TenderAwardedEvent(TenantContext.getTenant(), saved.getCode(),
-            saved.getTitle(), request.supplierCode(), unsuccessful, Instant.now()));
+            saved.getTitle(), request.supplierCode(), winningBid.getTotalAmount(),
+            winningBid.getCurrencyCode(), unsuccessful, Instant.now()));
 
         return withItemCount(saved);
     }
