@@ -1,0 +1,44 @@
+server:
+  port: 8100
+
+spring:
+  application:
+    name: reporting-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/procurement}
+    username: ${DB_USER:procurement}
+    password: ${DB_PASSWORD:procurement}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    schemas: public
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8081/realms/procurement}
+
+reporting:
+  # Where rendered files are written. Object storage (S3/MinIO) in production; a
+  # directory is enough while the storage seam is what matters.
+  storage-dir: ${REPORT_STORAGE_DIR:${java.io.tmpdir}/procurement-reports}
+  # Reports are CPU-heavy; a bounded pool keeps a burst of requests from starving
+  # the web threads that serve everything else.
+  workers: 2
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true

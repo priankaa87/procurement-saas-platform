@@ -68,6 +68,12 @@ spring:
             - Path=/api/enlistment-schedules/**,/api/enlistments/**
           filters:
             - StripPrefix=2
+        - id: reporting-service
+          uri: ${REPORTING_URI:http://localhost:8100}
+          predicates:
+            - Path=/api/reports/**
+          filters:
+            - StripPrefix=2
         # Control plane: manages tenants themselves, so it is not tenant-scoped.
         - id: tenant-billing-service
           uri: ${TENANT_URI:http://localhost:8096}

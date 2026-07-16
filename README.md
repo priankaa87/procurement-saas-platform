@@ -52,6 +52,7 @@ procurement-saas-platform/
 ├── award-contract-service/     # Notice of award, work orders, delivery, goods receipt
 ├── workflow-approval-service/  # Approval engine: steps, separation of duties, delegation
 ├── enlistment-service/         # Supplier pre-qualification, time-bounded enlistment
+├── reporting-service/          # Async report engine (XLSX/CSV), job lifecycle, download
 ├── tenant-billing-service/     # SaaS control plane: onboarding, schema provisioning, plans
 ├── docs/                       # Architecture & design notes
 └── docker-compose.yml          # Local infra: PostgreSQL, Kafka, Keycloak, Redis, MinIO
