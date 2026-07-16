@@ -104,6 +104,6 @@ Tempo · Docker · Kubernetes · React + TypeScript · Flyway · Testcontainers
 - [x] Tenant & Billing — onboarding with real schema provisioning, plans, quotas, invoices
 - [x] Award & Contract — notice of award, work orders, delivery schedule, goods receipt
 - [x] Workflow & Approval — configurable steps, separation of duties, delegation of authority
-- [ ] Enlistment / Pre-Qualification
+- [x] Enlistment / Pre-Qualification — rounds, mandatory criteria, time-bounded enlistment
 - [ ] Tenant & Billing (SaaS) + Reporting engine
 - [ ] React front end

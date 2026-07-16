@@ -1,6 +1,8 @@
 package com.procurementsaas.vendor.service;
 
+import com.procurementsaas.common.tenancy.TenantContext;
 import com.procurementsaas.common.web.NotFoundException;
+import com.procurementsaas.events.SupplierDebarredEvent;
 import com.procurementsaas.vendor.domain.Supplier;
 import com.procurementsaas.vendor.domain.SupplierDebarment;
 import com.procurementsaas.vendor.domain.SupplierStatus;
@@ -8,9 +10,11 @@ import com.procurementsaas.vendor.dto.Dtos.DebarRequest;
 import com.procurementsaas.vendor.dto.Dtos.DebarmentDto;
 import com.procurementsaas.vendor.repo.SupplierDebarmentRepository;
 import com.procurementsaas.vendor.repo.SupplierRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,11 +30,14 @@ public class DebarmentService {
 
     private final SupplierRepository supplierRepository;
     private final SupplierDebarmentRepository debarmentRepository;
+    private final ApplicationEventPublisher events;
 
     public DebarmentService(SupplierRepository supplierRepository,
-                            SupplierDebarmentRepository debarmentRepository) {
+                            SupplierDebarmentRepository debarmentRepository,
+                            ApplicationEventPublisher events) {
         this.supplierRepository = supplierRepository;
         this.debarmentRepository = debarmentRepository;
+        this.events = events;
     }
 
     @Transactional(readOnly = true)
@@ -53,7 +60,16 @@ public class DebarmentService {
             LocalDate.now(), request.debarredUntil());
         supplier.markDebarred();
         supplierRepository.save(supplier);
-        return VendorMapper.toDto(debarmentRepository.save(debarment));
+        SupplierDebarment saved = debarmentRepository.save(debarment);
+
+        // Announced once committed. Other services withdraw the supplier's
+        // pre-qualifications and tell them why; none of that is this service's concern,
+        // and none of it may fail the debarment.
+        events.publishEvent(new SupplierDebarredEvent(TenantContext.getTenant(),
+            supplier.getCode(), supplier.getName(), request.reason(), request.debarredUntil(),
+            Instant.now()));
+
+        return VendorMapper.toDto(saved);
     }
 
     /** Lifts the active debarment and returns the supplier to active participation. */

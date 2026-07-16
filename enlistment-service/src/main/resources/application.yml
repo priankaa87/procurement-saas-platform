@@ -1,9 +1,9 @@
 server:
-  port: 8091
+  port: 8099
 
 spring:
   application:
-    name: vendor-management-service
+    name: enlistment-service
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/procurement}
     username: ${DB_USER:procurement}
@@ -12,17 +12,19 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
-    properties:
-      hibernate.format_sql: true
   flyway:
     enabled: true
     schemas: public
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      acks: all
+    consumer:
+      group-id: enlistment-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: com.procurementsaas.events
   security:
     oauth2:
       resourceserver:
