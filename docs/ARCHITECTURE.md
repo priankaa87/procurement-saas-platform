@@ -105,5 +105,5 @@ Tempo · Docker · Kubernetes · React + TypeScript · Flyway · Testcontainers
 - [x] Award & Contract — notice of award, work orders, delivery schedule, goods receipt
 - [x] Workflow & Approval — configurable steps, separation of duties, delegation of authority
 - [x] Enlistment / Pre-Qualification — rounds, mandatory criteria, time-bounded enlistment
-- [ ] Tenant & Billing (SaaS) + Reporting engine
-- [ ] React front end
+- [x] Reporting engine — async jobs, pluggable renderers (XLSX/CSV) + data providers
+- [x] React front end — Vite + TypeScript, OIDC-ready, feature-gated UI

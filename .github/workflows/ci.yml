@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  backend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,16 +22,40 @@ jobs:
 
       # Pull both test images up front, in parallel. Otherwise the first module that
       # needs an image pays for the pull inside its test task, serially, while every
-      # other module waits — which is exactly what made this build 13 minutes.
+      # other module waits.
       - name: Pre-pull Testcontainers images
         run: |
           docker pull -q postgres:16 &
           docker pull -q apache/kafka-native:3.8.1 &
           wait
-          docker images --format '{{.Repository}}:{{.Tag}} {{.Size}}'
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
       - name: Build
         run: ./gradlew build --no-daemon
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Type-check and build
+        run: npm run build
+
+      - name: Test
+        run: npm test

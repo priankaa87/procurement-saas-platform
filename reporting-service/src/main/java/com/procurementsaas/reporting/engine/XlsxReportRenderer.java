@@ -77,8 +77,10 @@ public class XlsxReportRenderer implements ReportRenderer {
     private static void writeCell(Cell cell, Object value) {
         switch (value) {
             case null -> cell.setBlank();
-            case Number number -> cell.setCellValue(number.doubleValue());
+            // BigDecimal is a Number, so it must be matched before the general Number case,
+            // which would otherwise dominate and make this label unreachable.
             case BigDecimal decimal -> cell.setCellValue(decimal.doubleValue());
+            case Number number -> cell.setCellValue(number.doubleValue());
             case Boolean bool -> cell.setCellValue(bool);
             case LocalDate date -> cell.setCellValue(date.toString());
             case Instant instant -> cell.setCellValue(instant.toString());

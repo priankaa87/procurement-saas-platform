@@ -28,8 +28,6 @@ import java.util.Map;
 @Service
 public class ReportService {
 
-    private static final Logger log = LoggerFactory.getLogger(ReportService.class);
-
     private final ReportDefinitionRepository definitionRepository;
     private final ReportJobRepository jobRepository;
     private final Map<String, ReportDataProvider> providers;
