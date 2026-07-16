@@ -20,6 +20,16 @@ jobs:
           java-version: '21'
           cache: gradle
 
+      # Pull both test images up front, in parallel. Otherwise the first module that
+      # needs an image pays for the pull inside its test task, serially, while every
+      # other module waits — which is exactly what made this build 13 minutes.
+      - name: Pre-pull Testcontainers images
+        run: |
+          docker pull -q postgres:16 &
+          docker pull -q apache/kafka-native:3.8.1 &
+          wait
+          docker images --format '{{.Repository}}:{{.Tag}} {{.Size}}'
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
