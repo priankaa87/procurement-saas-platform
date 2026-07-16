@@ -16,10 +16,14 @@ public record ReportData(String title, List<String> columns, List<List<Object>> 
 
     public ReportData {
         columns = List.copyOf(columns);
+        // A record component reassigned in the compact constructor is no longer effectively
+        // final, so it cannot be captured by the lambda below. Read the count into a final
+        // local first.
+        int columnCount = columns.size();
         rows = rows.stream().map(row -> {
-            if (row.size() != columns.size()) {
+            if (row.size() != columnCount) {
                 throw new IllegalArgumentException(
-                    "Row has " + row.size() + " values but there are " + columns.size()
+                    "Row has " + row.size() + " values but there are " + columnCount
                         + " columns: " + row);
             }
             return row;

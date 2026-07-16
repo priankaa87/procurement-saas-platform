@@ -1,25 +1,19 @@
 package com.procurementsaas.reporting.config;
 
-import com.procurementsaas.reporting.domain.ReportFormat;
-import com.procurementsaas.reporting.engine.ReportDataProvider;
-import com.procurementsaas.reporting.engine.ReportRenderer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 /**
- * Wires the reporting engine together: the worker pool, and lookups from a format to its
- * renderer and from a provider code to its provider.
+ * Wires the report worker pool.
  *
- * <p>Building the maps from every bean that implements the interface means adding a
- * renderer or provider is a matter of writing the class — nothing here has to be edited.
+ * <p>The format→renderer and code→provider lookups are built inside the consumers from an
+ * injected {@code List} of each interface, rather than as {@code Map} beans here.
+ * Injecting a {@code Map<String, X>} would trigger Spring's convention of collecting every
+ * {@code X} bean keyed by <em>bean name</em> — not by our own {@code code()} — which is a
+ * silent, surprising mismatch. A list is unambiguous.
  */
 @Configuration
 public class ReportingConfig {
@@ -38,17 +32,5 @@ public class ReportingConfig {
         executor.setThreadNamePrefix("report-");
         executor.initialize();
         return executor;
-    }
-
-    @Bean
-    public Map<ReportFormat, ReportRenderer> renderersByFormat(List<ReportRenderer> renderers) {
-        return renderers.stream()
-            .collect(Collectors.toMap(ReportRenderer::format, Function.identity()));
-    }
-
-    @Bean
-    public Map<String, ReportDataProvider> providersByCode(List<ReportDataProvider> providers) {
-        return providers.stream()
-            .collect(Collectors.toMap(ReportDataProvider::code, Function.identity()));
     }
 }

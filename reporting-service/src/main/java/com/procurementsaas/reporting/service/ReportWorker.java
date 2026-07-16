@@ -16,7 +16,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Renders a queued report on a worker thread.
@@ -39,13 +42,15 @@ public class ReportWorker {
 
     public ReportWorker(ReportDefinitionRepository definitionRepository,
                         ReportJobRepository jobRepository,
-                        Map<ReportFormat, ReportRenderer> renderers,
-                        Map<String, ReportDataProvider> providers,
+                        List<ReportRenderer> renderers,
+                        List<ReportDataProvider> providers,
                         ReportStorage storage) {
         this.definitionRepository = definitionRepository;
         this.jobRepository = jobRepository;
-        this.renderers = renderers;
-        this.providers = providers;
+        this.renderers = renderers.stream()
+            .collect(Collectors.toMap(ReportRenderer::format, Function.identity()));
+        this.providers = providers.stream()
+            .collect(Collectors.toMap(ReportDataProvider::code, Function.identity()));
         this.storage = storage;
     }
 

@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Orchestrates report production: accept a request, hand it to a worker, render, store.
@@ -36,12 +38,13 @@ public class ReportService {
 
     public ReportService(ReportDefinitionRepository definitionRepository,
                          ReportJobRepository jobRepository,
-                         Map<String, ReportDataProvider> providers,
+                         List<ReportDataProvider> providers,
                          ReportStorage storage,
                          ReportWorker worker) {
         this.definitionRepository = definitionRepository;
         this.jobRepository = jobRepository;
-        this.providers = providers;
+        this.providers = providers.stream()
+            .collect(Collectors.toMap(ReportDataProvider::code, Function.identity()));
         this.storage = storage;
         this.worker = worker;
     }
